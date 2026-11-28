@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-drafthouse-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <!-- Keeps the original artifactId so the uber-jar name is unchanged. -->
+  <artifactId>casehub-drafthouse</artifactId>
+
+  <dependencies>
+    <!-- DraftHouse domain API -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-drafthouse-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- casehub-platform — provides MockCurrentPrincipal @DefaultBean required by Qhorus JPA stores.
+         Must be runtime scope in application modules with quarkus:build goal per PLATFORM.md. -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform</artifactId>
+      <version>${casehub.platform.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Qhorus — channels, typed messages, commitment tracking, shared data.
+         Brings quarkus-flyway and db/migration/qhorus classpath entries transitively;
+         all qhorus schema migrations are owned by casehub-qhorus, not DraftHouse. -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus</artifactId>
+      <version>${casehub.qhorus.version}</version>
+    </dependency>
+
+    <!-- Platform Agent API — provider-agnostic LLM invocation via AgentProvider SPI -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-agent-api</artifactId>
+      <version>${casehub.platform.version}</version>
+    </dependency>
+
+    <!-- LangChain4j — ChatModel structured output for notes cleanup pipeline -->
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-core</artifactId>
+      <version>1.14.1</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j</artifactId>
+      <version>1.14.1</version>
+    </dependency>
+
+    <!-- Work Progress API — satisfies blocks provided-scope dependency on progress types -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-work-progress-api</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- CaseHub npm packages (unpacked by maven-dependency-plugin) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-pages-npm</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-mosaic-npm</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Quinoa — npm build integration at compile time -->
+    <dependency>
+      <groupId>io.quarkiverse.quinoa</groupId>
+      <artifactId>quarkus-quinoa</artifactId>
+      <version>2.8.3</version>
+    </dependency>
+
+    <!-- Pages Push — typed push protocol SDK (wire builders, topic registry, event store) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-pages-push</artifactId>
+      <version>0.4-SNAPSHOT</version>
+    </dependency>
+
+    <!-- WebSockets Next — WebSocket support for debate event push -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-websockets-next</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-jackson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-health</artifactId>
+    </dependency>
+    <!-- quarkus-arc omitted — pulled transitively by quarkus-rest-jackson -->
+
+    <!-- H2 JDBC driver for qhorus datasource (dev/test; use PostgreSQL in prod) -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-h2</artifactId>
+    </dependency>
+
+    <!-- JGit — local git history access for review session versioning -->
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>6.9.0.202403050737-r</version>
+    </dependency>
+
+    <!-- pty4j — PTY management for terminal WebSocket endpoint (first native dependency) -->
+    <dependency>
+      <groupId>org.jetbrains.pty4j</groupId>
+      <artifactId>pty4j</artifactId>
+      <version>0.13.11</version>
+    </dependency>
+
+    <!-- directory-watcher — native macOS FSEvents via JNA, cross-platform recursive watching -->
+    <dependency>
+      <groupId>io.methvin</groupId>
+      <artifactId>directory-watcher</artifactId>
+      <version>0.18.0</version>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.playwright</groupId>
+      <artifactId>quarkus-playwright</artifactId>
+      <version>${quarkus-playwright.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit-mockito</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.27.7</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Qhorus in-memory stores for unit tests (no DB required).
+         Exclude persistence-memory: its InMemory*Store beans duplicate the ones in
+         casehub-qhorus-testing, causing CDI AmbiguousResolutionException at test startup. -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus-testing</artifactId>
+      <version>${casehub.qhorus.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>io.casehub</groupId>
+          <artifactId>casehub-qhorus-persistence-memory</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- Awaitility — async delivery via ChannelGateway virtual threads -->
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>4.3.0</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Jakarta WebSocket client for integration tests -->
+    <dependency>
+      <groupId>org.glassfish.tyrus.bundles</groupId>
+      <artifactId>tyrus-standalone-client</artifactId>
+      <version>2.2.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-casehub-packages</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>io.casehub</groupId>
+                  <artifactId>casehub-pages-npm</artifactId>
+                  <version>${project.version}</version>
+                  <outputDirectory>${project.basedir}/src/main/webui/.casehub-packages</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>io.casehub</groupId>
+                  <artifactId>casehub-mosaic-npm</artifactId>
+                  <version>${project.version}</version>
+                  <outputDirectory>${project.basedir}/src/main/webui/.casehub-packages</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <execution>
+            <id>strip-casehub-internal-deps</id>
+            <phase>generate-sources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>python3</executable>
+              <arguments>
+                <argument>-c</argument>
+                <argument>import json,sys;from pathlib import Path;d=Path(sys.argv[1])
+if not d.is_dir():print('No packages dir — skipping strip');sys.exit(0)
+c=0
+for p in sorted(d.glob('*/package.json')):
+ pkg=json.load(open(p));ch=False
+ for k in ('dependencies','peerDependencies','devDependencies'):
+  rm=[n for n in pkg.get(k,{}) if n.startswith('@casehubio/')]
+  for n in rm:del pkg[k][n];ch=True
+ if ch:json.dump(pkg,open(p,'w'),indent=2);open(p,'a').write('\n');c+=1
+print(f'Stripped internal deps from {c} packages')</argument>
+                <argument>${project.basedir}/src/main/webui/.casehub-packages/packages</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>${quarkus.platform.group-id}</groupId>
+        <artifactId>quarkus-maven-plugin</artifactId>
+        <version>${quarkus.platform.version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+              <goal>generate-code</goal>
+              <goal>generate-code-tests</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/e2e/**</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

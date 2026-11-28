@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-claudony-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>casehub-claudony-app</artifactId>
+  <name>Claudony :: App</name>
+  <description>Quarkus application: REST API, WebSocket terminal, dashboard, auth, fleet, agent MCP</description>
+
+  <properties>
+    <claudony.skipTests>false</claudony.skipTests>
+  </properties>
+
+  <dependencies>
+    <!-- Platform: preferences API + config-file provider + @DefaultBean mocks (MockCurrentPrincipal etc.) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-registry-inmem</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-config</artifactId>
+    </dependency>
+    <dependency>
+      <!-- MockCurrentPrincipal @DefaultBean — required when casehub-engine is on classpath -->
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform</artifactId>
+    </dependency>
+    <!-- Platform agent routing stack — displaces NoOpAgentProvider -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-agent-router</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-agent-gate</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-agent-langchain4j</artifactId>
+    </dependency>
+    <dependency>
+      <!-- In-memory engine persistence for tutorial/single-node deployments.
+           Provides InMemoryCaseInstanceRepository, InMemoryEventLogRepository,
+           InMemoryCaseMetaModelRepository as @Alternative @Priority(1) beans.
+           Activated via quarkus.arc.selected-alternatives below. -->
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-persistence-memory</artifactId>
+    </dependency>
+    <dependency>
+      <!-- Quartz-backed JobScheduler implementation (QuartzJobScheduler @ApplicationScoped).
+           Works with casehub-engine-persistence-memory's quarkus.quartz.store-type=ram. -->
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-scheduler-quartz</artifactId>
+    </dependency>
+    <!-- Core services from casehub-claudony-core -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-claudony-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- CaseHub integration (optional — enabled via claudony.casehub.enabled=true) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-claudony-casehub</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-jackson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-websockets-next</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.mcp</groupId>
+      <artifactId>quarkus-mcp-server-http</artifactId>
+      <version>${quarkus-mcp-server.version}</version>
+    </dependency>
+    <!-- Qhorus agent communication mesh — auto-registers 39 @Tool methods at /mcp -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus</artifactId>
+    </dependency>
+    <!-- Explicit qhorus-api dep — transitive SNAPSHOT resolution on GitHub Packages
+         is unreliable (GE-20260430-0042ff); required for ChannelDetail, InstanceInfo -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus-push</artifactId>
+    </dependency>
+    <!-- Qhorus testing support — InMemory*Store alternatives for unit tests -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus-testing</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus-persistence-memory</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus-postgres-broadcaster</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-testing</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <!-- Exclude old 'engine' artifact — it transitively pulls in quarkus-ledger (old artifact
+             name) which conflicts with casehub-ledger (new artifact name): both register a Quarkus
+             extension with feature name "ledger", causing a build-time error.
+             CaseHubRuntimeImpl is provided by casehub-engine (new name) below instead. -->
+        <exclusion>
+          <groupId>io.casehub</groupId>
+          <artifactId>engine</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <!-- CaseHubRuntimeImpl — enables production case orchestration.
+           casehub-engine brings in casehub-ledger which is already on the classpath — Maven
+           deduplicates it so there is no "duplicate ledger feature" conflict. -->
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine</artifactId>
+    </dependency>
+    <dependency>
+      <!-- JQEvaluator for casehub-engine's JQExpressionEngine and CaseContextChangedEventHandler. -->
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-expression</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>4.3.0</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Testcontainers PostgreSQL — used by ClaudonyReactiveCaseChannelProviderPostgresIT
+         via QuarkusTestResource to start a real PostgreSQL container before augmentation,
+         so the JDBC URL is available at the highest config priority. Version managed by
+         Quarkus BOM. -->
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- RunOnVertxContext + UniAsserter — required for IT tests that call reactive CDI
+         beans directly (Hibernate Reactive Panache requires a Vert.x event loop context). -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-test-vertx</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- PostgreSQL reactive client — enables reactive Vert.x pool for PostgreSQL datasources -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-reactive-pg-client</artifactId>
+    </dependency>
+    <!-- PostgreSQL JDBC driver — required by Flyway in the reactive-pg test profile.
+         quarkus-jdbc-postgresql is <optional>true</optional> in casehub-qhorus and
+         does not propagate transitively. -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
+    </dependency>
+    <!-- Hibernate Reactive Panache — required for reactive Qhorus JPA repos (optional in qhorus jar) -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-reactive-panache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-health</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-micrometer-registry-prometheus</artifactId>
+    </dependency>
+    <!-- OpenTelemetry — provides Tracer bean required by Qhorus MessageService -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-opentelemetry</artifactId>
+    </dependency>
+    <!-- Quinoa — builds src/main/webui TypeScript and serves the output -->
+    <dependency>
+      <groupId>io.quarkiverse.quinoa</groupId>
+      <artifactId>quarkus-quinoa</artifactId>
+      <version>2.8.3</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-websockets-client</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-client-jackson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit-mockito</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-security-webauthn</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-test-security</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.24.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.microsoft.playwright</groupId>
+      <artifactId>playwright</artifactId>
+      <version>1.52.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-casehub-packages</id>
+            <phase>${casehub-packages.phase}</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>io.casehub</groupId>
+                  <artifactId>casehub-pages-npm</artifactId>
+                  <version>${casehub.version}</version>
+                  <outputDirectory>${project.basedir}/src/main/webui/.casehub-packages</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>io.casehub</groupId>
+                  <artifactId>casehub-mosaic-npm</artifactId>
+                  <version>${casehub.version}</version>
+                  <outputDirectory>${project.basedir}/src/main/webui/.casehub-packages</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>strip-casehub-internal-deps</id>
+            <phase>generate-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>io.quarkus.platform</groupId>
+        <artifactId>quarkus-maven-plugin</artifactId>
+        <version>${quarkus.platform.version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+              <goal>generate-code</goal>
+              <goal>generate-code-tests</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>io.casehub</groupId>
+              <artifactId>casehub-platform-graphql-generator</artifactId>
+              <version>${casehub.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <arg>-AdomainFilter=claudony/sessions,claudony/mesh,claudony/cases,claudony/actions,claudony/peers,claudony/pools,claudony/apps,claudony/registry,claudony/ops</arg>
+            <arg>-AgenerateGraphQL=false</arg>
+            <arg>-ArestPathPrefix=/api</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <!-- Fail fast if esbuild output is missing — turns a silent 404 test failure into
+           a clear build error with instructions. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-frontend-built</id>
+            <phase>process-classes</phase>
+            <goals><goal>enforce</goal></goals>
+            <configuration>
+              <rules>
+                <requireFilesExist>
+                  <files>
+                    <file>${project.basedir}/src/main/webui/dist/terminal.js</file>
+                  </files>
+                  <message>Frontend not built: src/main/webui/dist/terminal.js missing. Run 'npm install &amp;&amp; npm run build' in app/src/main/webui/ first.</message>
+                </requireFilesExist>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Copy esbuild output to META-INF/resources/app so the JS bundles are available
+           as static resources during @QuarkusTest (where Quinoa is disabled by default). -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-quinoa-dist</id>
+            <phase>process-classes</phase>
+            <goals><goal>copy-resources</goal></goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/META-INF/resources/app</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/main/webui/dist</directory>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+              <overwrite>true</overwrite>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>${claudony.skipTests}</skipTests>
+          <systemPropertyVariables>
+            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+          </systemPropertyVariables>
+          <excludes>
+            <exclude>**/*E2ETest.java</exclude>
+            <!-- Disabled pending engine SPI restoration (reactive SPI retirement #184).
+                 These tests depend on removed SPIs: WorkerExecutionManager, WorkerExecutionRecoveryService.
+                 See claudony#184 for restoration tracking. -->
+            <exclude>**/CaseEngineRoundTripTest.java</exclude>
+            <exclude>**/AgentCaseCompletionTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>native</id>
+      <activation>
+        <property>
+          <name>native</name>
+        </property>
+      </activation>
+      <properties>
+        <skipITs>false</skipITs>
+        <quarkus.native.enabled>true</quarkus.native.enabled>
+      </properties>
+    </profile>
+    <profile>
+      <id>e2e</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+              </systemPropertyVariables>
+              <includes>
+                <include>**/*E2ETest.java</include>
+              </includes>
+              <excludes combine.self="override"/>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

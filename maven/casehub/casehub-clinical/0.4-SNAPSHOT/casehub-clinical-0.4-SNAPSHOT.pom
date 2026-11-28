@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-clinical-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>casehub-clinical</artifactId>
+  <name>CaseHub Clinical :: Runtime</name>
+
+  <dependencies>
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-neocortex-memory-api</artifactId>
+            <version>${version.io.casehub}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-neocortex-memory</artifactId>
+            <version>${version.io.casehub}</version>
+            <scope>runtime</scope>
+        </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-clinical-api</artifactId>
+    </dependency>
+
+    <!-- Layer 2: human task lifecycle — WorkItem SLA, candidateGroups routing -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-work</artifactId>
+    </dependency>
+
+    <!-- Layer 2: tamper-evident audit ledger — AdverseEventLedgerEntry -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-ledger</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-ledger-jpa-common</artifactId>
+    </dependency>
+
+    <!-- Layer 7: casehub-engine-ledger — activates TrustWeightedAgentStrategy,
+         WorkerDecisionEventCapture, TrustScoreCache, CaseLedgerEntryRepository by classpath presence -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-ledger</artifactId>
+    </dependency>
+
+    <!-- Routing blocks — RoutingFeatureExtractor SPI + AI routing strategies -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-agency</artifactId>
+      <version>${version.io.casehub}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-pdf</artifactId>
+      <version>${version.io.casehub}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-qute</artifactId>
+    </dependency>
+
+    <!-- Eidos org model — agent hierarchy + supervision chains.
+         org-api: OrgStructure DSL, OrgRegistry interface.
+         org-memory: InMemoryOrgRegistry @Alternative.
+         casehub-eidos-org runtime NOT included — OrgBootstrap pulls in eidos-core
+         beans (DispositionSignalStore etc.) that clinical doesn't use.
+         Org structure is registered directly in ClinicalTrialCaseHub.augment(). -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-eidos-org-api</artifactId>
+      <version>${version.io.casehub}</version>
+    </dependency>
+
+    <!-- LLM invocation — AgentProvider SPI + routing + Claude backend -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-agent-api</artifactId>
+      <version>${version.io.casehub}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-agent-router</artifactId>
+      <version>${version.io.casehub}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-agent-session-core</artifactId>
+      <version>${version.io.casehub}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-agent-claude</artifactId>
+      <version>${version.io.casehub}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Layer 3: formal PI obligation tracking via COMMAND lifecycle -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus</artifactId>
+    </dependency>
+
+    <!-- Layer 4: sponsor notification delivery via connector SPI -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-connectors-core</artifactId>
+    </dependency>
+
+    <!-- Retry policy preferences — YAML-backed SingleValuePreference for SponsorNotificationRetryPolicy -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-config</artifactId>
+    </dependency>
+
+    <!-- OidcCurrentPrincipal @RequestScoped — becomes sole active CurrentPrincipal;
+         brings quarkus-oidc transitively. clinical#88. -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-oidc</artifactId>
+      <version>${version.io.casehub}</version>
+    </dependency>
+
+    <!-- Layer 7: CaseMemoryStore — JPA (prod) displaces NoOpCaseMemoryStore; in-memory (test) selected via selected-alternatives -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-neocortex-memory-jpa</artifactId>
+      <version>${version.io.casehub}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-neocortex-memory-inmem</artifactId>
+      <version>${version.io.casehub}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Task 1: CBR case-based reasoning — InMemoryCbrCaseMemoryStore for precedent retrieval -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-neocortex-memory-cbr-inmem</artifactId>
+      <version>${version.io.casehub}</version>
+    </dependency>
+
+    <!-- Layer 5: platform expression engine + @DefaultBean mocks (required by casehub-engine) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-expression</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-testing</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- In-memory ledger entry repository — avoids ledger_subject_sequence table in H2 tests.
+         JpaLedgerEntryRepository now uses LedgerSequenceAllocator (native SQL, not entity-mapped).
+         InMemoryLedgerEntryRepository provides the same SPI without requiring the sequence table. -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-ledger-persistence-memory</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Worker primitives — WorkerResult, PlannedAction, Worker (moved from engine-api in engine#543) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-worker-api</artifactId>
+    </dependency>
+
+    <!-- Layer 5: casehub-engine — adaptive protocol paths (IRB gate + AE escalation) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-scheduler-quartz</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-work-adapter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-persistence-hibernate</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-testing</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-eidos-org-memory</artifactId>
+      <version>${version.io.casehub}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- compile scope: needed for dev mode (memory engine stores when reactive PU is unavailable).
+         All beans are @Alternative — inactive unless selected via quarkus.arc.selected-alternatives.
+         Parent POM dependencyManagement forces scope=test; explicit scope=compile overrides it. -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-persistence-memory</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-orm-panache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-flyway</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-jackson</artifactId>
+    </dependency>
+    <!-- Quinoa (quarkus-quinoa) — deferred to Plan 2 (TypeScript UI).
+         The deployment processor runs at build time regardless of config properties,
+         and npm install fails without @casehubio/pages-* packages linked locally.
+         Re-add when casehub-pages packages are resolvable. -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-validator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-openapi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-health</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-h2</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- UI hosting via Quinoa — disabled until Plan 2 (TypeScript UI).
+         Commented out: deployment processor runs npm ci even with enabled=false,
+         and no package-lock.json exists (webui uses Yarn portal: resolutions).
+    <dependency>
+      <groupId>io.quarkiverse.quinoa</groupId>
+      <artifactId>quarkus-quinoa</artifactId>
+    </dependency>
+    -->
+
+    <!-- Test -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- @TestSecurity — controls SecurityIdentity in @QuarkusTest without a real OIDC server (clinical#88) -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-test-security</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit-mockito</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-pages-push</artifactId>
+      <version>${version.io.casehub}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-pages-push-runtime</artifactId>
+      <version>${version.io.casehub}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-websockets-next</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-pages-playbook-client</artifactId>
+      <version>${version.io.casehub}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-pages-npm</artifactId>
+      <version>${version.io.casehub}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-mosaic-npm</artifactId>
+      <version>${version.mosaic}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>io.casehub</groupId>
+              <artifactId>casehub-platform-graphql-generator</artifactId>
+              <version>${version.io.casehub}</version>
+            </path>
+            <path>
+              <groupId>io.casehub</groupId>
+              <artifactId>casehub-clinical-api</artifactId>
+              <version>${project.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <arg>-AdomainFilter=clinical/trials,clinical/sites,clinical/patients,clinical/adverse-events,clinical/deviations,clinical/visits,clinical/vitals,clinical/lab-results,clinical/medications,clinical/study-drug,clinical/amendments,clinical/gdpr,clinical/cascade,clinical/escalation-plans,clinical/trial-dashboard</arg>
+            <arg>-AgenerateGraphQL=false</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-casehub-packages</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>io.casehub</groupId>
+                  <artifactId>casehub-pages-npm</artifactId>
+                  <version>${version.io.casehub}</version>
+                  <outputDirectory>${project.basedir}/src/main/webui/.casehub-packages</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>io.casehub</groupId>
+                  <artifactId>casehub-mosaic-npm</artifactId>
+                  <version>${version.mosaic}</version>
+                  <outputDirectory>${project.basedir}/src/main/webui/.casehub-packages</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>io.quarkus.platform</groupId>
+        <artifactId>quarkus-maven-plugin</artifactId>
+        <version>${quarkus.platform.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+              <goal>generate-code</goal>
+              <goal>generate-code-tests</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+          </systemPropertyVariables>
+          <excludedGroups>showcase</excludedGroups>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

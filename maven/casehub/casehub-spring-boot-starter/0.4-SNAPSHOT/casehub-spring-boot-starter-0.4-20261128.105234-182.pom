@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform-parent</artifactId>
+        <version>0.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>casehub-spring-boot-starter</artifactId>
+    <packaging>pom</packaging>
+    <name>CaseHub Spring Boot Starter</name>
+    <description>Core CaseHub platform Spring Boot starter — auto-configured
+        persistence, MCP, callbacks, identity, and mock fallbacks.
+        Add casehub-spring-boot-starter-agent for agent backends,
+        casehub-spring-boot-starter-streams for stream adapters.</description>
+
+    <dependencies>
+        <!-- Core auto-configuration + mock fallbacks -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring Data JPA persistence -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-persistence-spring-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-acl-spring-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-notifications-spring-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-notification-settings-spring-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-subscriptions-spring-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-datasource-spring-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-digest-spring-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-delivery-tracking-spring-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-view-spring-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- MCP / tool support -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-mcp-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Callback decorator -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-callback-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Identity -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-identity-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Credentials -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-credentials-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Expression engines + ConfigManager/SecretManager -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-expression-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- OIDC -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-oidc-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring Security fallback (no OIDC) -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-security-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- SCIM -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-scim-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Registration (optional) -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-registration-spring</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-user-spring-jpa</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Actuator health/metrics/info -->
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-spring-actuator</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Jackson 2 bridge — Spring Boot 4 defaults to Jackson 3.
+             Keeps both frameworks on Jackson 2 ObjectMapper until
+             Quarkus 4 aligns on Jackson 3 (~Nov 2026). -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-jackson2</artifactId>
+        </dependency>
+    </dependencies>
+</project>

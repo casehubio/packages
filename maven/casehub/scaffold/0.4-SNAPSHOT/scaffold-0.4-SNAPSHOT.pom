@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-parent</artifactId>
+        <version>0.4-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <artifactId>scaffold</artifactId>
+    <version>0.4-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>CaseHub Scaffold</name>
+    <description>Deployable microservice for CaseHub platform — backend + optional web console</description>
+
+    <modules>
+        <module>scaffold-backend</module>
+    </modules>
+
+    <properties>
+        <version.mosaic>${casehub.version}</version.mosaic>
+        <jackson-jq.version>1.6.5</jackson-jq.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>net.thisptr</groupId>
+                <artifactId>jackson-jq</artifactId>
+                <version>${jackson-jq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.thisptr</groupId>
+                <artifactId>jackson-jq-extra</artifactId>
+                <version>${jackson-jq.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+  
+  <repositories>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/*</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>casehubio GitHub Packages</name>
+            <url>https://maven.pkg.github.com/casehubio/scaffold</url>
+        </repository>
+        <snapshotRepository>
+            <id>github</id>
+            <name>casehubio GitHub Packages</name>
+            <url>https://maven.pkg.github.com/casehubio/scaffold</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:git:https://github.com/casehubio/scaffold.git</connection>
+        <developerConnection>scm:git:https://github.com/casehubio/scaffold.git</developerConnection>
+        <url>https://github.com/casehubio/scaffold</url>
+        <tag>HEAD</tag>
+    </scm>
+
+</project>

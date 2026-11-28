@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-aml-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>casehub-aml-api</artifactId>
+
+  <name>CaseHub AML :: API</name>
+  <description>AML domain model and service SPIs — pure Java, no Quarkus, no JPA</description>
+
+  <dependencies>
+    <!-- Engine API — CandidateSetStrategy, StaticSetStrategy used by AmlActionType -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-api</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- Blocks — shared compliance record types (RequirementStatus, RoutingDecisionRecord, TrustRoutingRequirement) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-agency-core</artifactId>
+      <version>${casehub.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Neocortex memory API — FeatureValue for CaseProfile.toFeatures() (Tier 1 pure Java) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-neocortex-memory-api</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>

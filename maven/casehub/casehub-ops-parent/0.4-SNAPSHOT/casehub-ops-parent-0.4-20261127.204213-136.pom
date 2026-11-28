@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-parent</artifactId>
+        <version>0.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>casehub-ops-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>CaseHub Ops :: Parent</name>
+    <description>Domain implementations for casehub-desiredstate — CaseHub agent topology, infrastructure
+        provisioning (Terraform/Ansible adapters), compliance posture (SOC2/GDPR/EU-AI-Act). Research project and reference architecture. IBM/Red Hat augmentation story over Terraform
+        and Ansible.</description>
+    <url>https://github.com/casehubio/casehub-ops</url>
+
+    <modules>
+        <module>api</module>
+        <module>container</module>
+        <module>service</module>
+        <module>app</module>
+        <module>deployment</module>
+        <module>infra</module>
+        <module>compliance</module>
+        <module>claudony</module>
+        <module>testing</module>
+        <module>topology-tests</module>
+        <module>runtime</module>
+        <module>examples/deployment-monitoring</module>
+    </modules>
+
+    <properties>
+        <jandex-maven-plugin.version>3.3.1</jandex-maven-plugin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Dependency convergence: engine-api 1.6.0 vs platform-expression 1.0.0 -->
+            <dependency>
+                <groupId>net.thisptr</groupId>
+                <artifactId>jackson-jq</artifactId>
+                <version>1.6.0</version>
+            </dependency>
+
+            <!-- casehub-ops inter-module -->
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ops-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ops-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ops-app</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ops-deployment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ops-infra</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ops-compliance</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ops-claudony</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ops-runtime</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ops-testing</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- not yet in parent BOM -->
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-annotations</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-agency-summarisation-yaml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>casehubio GitHub Packages</name>
+            <url>https://maven.pkg.github.com/casehubio/*</url>
+            <releases><enabled>false</enabled></releases>
+
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>casehubio GitHub Packages</name>
+            <url>https://maven.pkg.github.com/casehubio/casehub-ops</url>
+        </repository>
+        <snapshotRepository>
+            <id>github</id>
+            <name>casehubio GitHub Packages</name>
+            <url>https://maven.pkg.github.com/casehubio/casehub-ops</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:git:https://github.com/casehubio/casehub-ops.git</connection>
+        <developerConnection>scm:git:https://github.com/casehubio/casehub-ops.git</developerConnection>
+        <url>https://github.com/casehubio/casehub-ops</url>
+    </scm>
+
+
+
+</project>

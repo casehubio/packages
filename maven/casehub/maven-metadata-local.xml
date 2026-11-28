@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <plugins>
+    <plugin>
+      <name>CaseHub Platform :: MCP Spring Generator</name>
+      <prefix>mcp-spring-gen</prefix>
+      <artifactId>casehub-platform-mcp-spring-generator</artifactId>
+    </plugin>
+    <plugin>
+      <name>CaseHub Platform :: REST Spring Generator</name>
+      <prefix>rest-spring-gen</prefix>
+      <artifactId>casehub-platform-rest-spring-generator</artifactId>
+    </plugin>
+    <plugin>
+      <name>CaseHub Platform Spring Generator</name>
+      <prefix>spring-gen</prefix>
+      <artifactId>casehub-platform-spring-generator</artifactId>
+    </plugin>
+    <plugin>
+      <name>CaseHub Platform :: GraphQL Spring Generator</name>
+      <prefix>graphql-spring-gen</prefix>
+      <artifactId>casehub-platform-graphql-spring-generator</artifactId>
+    </plugin>
+    <plugin>
+      <name>CaseHub Platform YAML State Machine Generator</name>
+      <prefix>yaml-statemachine</prefix>
+      <artifactId>casehub-platform-yaml-statemachine-generator</artifactId>
+    </plugin>
+    <plugin>
+      <name>CaseHub Platform YAML Codegen</name>
+      <prefix>yaml-codegen</prefix>
+      <artifactId>casehub-platform-yaml-codegen</artifactId>
+    </plugin>
+  </plugins>
+</metadata>

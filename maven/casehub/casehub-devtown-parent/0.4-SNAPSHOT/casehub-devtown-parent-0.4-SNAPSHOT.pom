@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>casehub-devtown-parent</artifactId>
+  <version>0.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>CaseHub DevTown</name>
+  <description>AI-assisted software development application on the CaseHub platform</description>
+  <url>https://github.com/casehubio/devtown</url>
+
+  <modules>
+    <module>domain</module>
+    <module>review</module>
+    <module>queue</module>
+    <module>merge</module>
+    <module>github</module>
+    <module>app</module>
+    <module>templates/pr-review</module>
+  </modules>
+
+  <properties>
+    <version.mosaic>0.4-SNAPSHOT</version.mosaic>
+    <quarkus-mcp-server.version>1.11.1</quarkus-mcp-server.version>
+    <quarkus-quinoa.version>2.8.3</quarkus-quinoa.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-pages-npm</artifactId>
+        <version>${casehub.version}</version>
+      </dependency>
+      <!-- devtown inter-module -->
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-devtown-domain</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-devtown-review</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-devtown-pr-review-template</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-devtown-queue</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-devtown-merge</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-devtown-github</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- casehub-engine-work-adapter (WorkAdapterPlanItemEntity in Hibernate packages) -->
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-engine-work-adapter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- engine REST endpoints (plan-items, goals, case definitions) -->
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-engine-rest</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- casehub-neocortex memory API (MemoryDomain used in devtown-domain) -->
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-neocortex-memory-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- Quarkus MCP Server HTTP -->
+      <dependency>
+        <groupId>io.quarkiverse.mcp</groupId>
+        <artifactId>quarkus-mcp-server-http</artifactId>
+        <version>${quarkus-mcp-server.version}</version>
+      </dependency>
+
+      <!-- jackson-jq convergence: engine-api 1.6.0 vs platform-expression 1.0.0 -->
+      <dependency>
+        <groupId>net.thisptr</groupId>
+        <artifactId>jackson-jq</artifactId>
+        <version>1.6.0</version>
+      </dependency>
+
+      <!-- langchain4j convergence: eidos 1.14.1 vs agent-router-core/gemini 1.19.0 -->
+      <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-core</artifactId>
+        <version>1.19.0</version>
+      </dependency>
+
+      <!-- Quarkus Quinoa -->
+      <dependency>
+        <groupId>io.quarkiverse.quinoa</groupId>
+        <artifactId>quarkus-quinoa</artifactId>
+        <version>${quarkus-quinoa.version}</version>
+      </dependency>
+
+      <!-- nimbus-jose-jwt for GitHub App JWT signing -->
+      <dependency>
+        <groupId>com.nimbusds</groupId>
+        <artifactId>nimbus-jose-jwt</artifactId>
+        <version>10.3</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/*</url>
+      <releases><enabled>false</enabled></releases>
+
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/devtown</url>
+    </repository>
+    <snapshotRepository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/devtown</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+
+</project>

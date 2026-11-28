@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>io.casehub</groupId>
+  <artifactId>casehub-platform-registration-spring</artifactId>
+  <versioning>
+    <latest>0.4-SNAPSHOT</latest>
+    <release>0.4-SNAPSHOT</release>
+    <versions>
+      <version>0.4-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20261128170958</lastUpdated>
+  </versioning>
+</metadata>

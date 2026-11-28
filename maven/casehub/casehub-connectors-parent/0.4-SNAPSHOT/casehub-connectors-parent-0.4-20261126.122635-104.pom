@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>casehub-connectors-parent</artifactId>
+  <version>0.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>CaseHub Connectors — Parent</name>
+  <description>Lightweight outbound message connectors for the CaseHub platform.
+Provides a unified Connector SPI with built-in implementations for Slack (Incoming Webhooks),
+Microsoft Teams (Adaptive Cards), Twilio SMS, WhatsApp Business API, and Email (quarkus-mailer).
+Zero heavy dependencies — HTTP-based connectors use java.net.http only.</description>
+  <url>https://github.com/casehubio/connectors</url>
+
+  <modules>
+    <module>connectors-api</module>
+    <module>core</module>
+    <module>webhook</module>
+    <module>email</module>
+    <module>email-inbound</module>
+    <module>slack-bot</module>
+    <module>chat-spi</module>
+    <module>chat-ref</module>
+    <module>chat-irc</module>
+    <module>discord</module>
+    <module>chat-discord</module>
+    <module>signal-cli</module>
+    <module>chat-signal</module>
+    <module>telegram-bot</module>
+    <module>chat-telegram</module>
+    <module>chat-slack</module>
+    <module>chat-teams</module>
+    <module>notification-bridge</module>
+    <module>calendar-spi</module>
+    <module>calendar-ref</module>
+    <module>calendar-google</module>
+    <module>calendar-microsoft</module>
+    <module>bank-spi</module>
+    <module>bank-ref</module>
+    <module>bank-truelayer</module>
+    <module>email-spi</module>
+    <module>email-ref</module>
+    <module>email-google</module>
+    <module>email-microsoft</module>
+    <module>email-google-inbound</module>
+    <module>document-spi</module>
+    <module>document-ref</module>
+    <module>document-google</module>
+    <module>document-microsoft</module>
+    <module>contacts-spi</module>
+    <module>contacts-ref</module>
+    <module>contacts-google</module>
+    <module>location-spi</module>
+    <module>location-ref</module>
+    <module>location-google</module>
+    <module>commerce-spi</module>
+    <module>commerce-ref</module>
+    <module>commerce-amazon</module>
+    <module>commerce-shopify</module>
+    <module>travel-spi</module>
+    <module>travel-ref</module>
+    <module>travel-amadeus</module>
+    <module>travel-google</module>
+    <module>project-spi</module>
+    <module>project-ref</module>
+    <module>github-client</module>
+    <module>microsoft-graph-client</module>
+    <module>project-github</module>
+    <module>health-spi</module>
+    <module>health-ref</module>
+    <module>web-spi</module>
+    <module>web</module>
+    <module>web-ref</module>
+    <module>voice-spi</module>
+    <module>voice-ref</module>
+    <module>voice-sherpa</module>
+    <module>voice-pipeline-steps</module>
+    <module>mobile-spi</module>
+    <module>mobile-ref</module>
+    <module>mobile-dial</module>
+    <module>mobile-twilio</module>
+    <module>mobile-numbrrs</module>
+    <module>connector-lifecycle</module>
+    <module>graphql</module>
+    <module>connectors-spring</module>
+    <module>mcp-server-connectors</module>
+    <module>integration-tests</module>
+    <module>playbooks</module>
+  </modules>
+
+  <profiles>
+    <profile>
+      <id>jdk22+</id>
+      <activation>
+        <jdk>[22,)</jdk>
+      </activation>
+      <modules>
+        <module>voice-sherpa-native-osx-arm64</module>
+        <module>voice-sherpa-native-osx-x64</module>
+        <module>voice-sherpa-native-linux-x64</module>
+        <module>voice-sherpa-native-linux-arm64</module>
+        <module>voice-sherpa-native-win-x64</module>
+      </modules>
+    </profile>
+  </profiles>
+
+  <properties>
+    <quarkus.version>${quarkus.platform.version}</quarkus.version>
+    <quarkus-mcp-server.version>1.11.1</quarkus-mcp-server.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.wiremock</groupId>
+        <artifactId>wiremock-standalone</artifactId>
+        <version>3.9.1</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.27.3</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.cloudevents</groupId>
+        <artifactId>cloudevents-core</artifactId>
+        <version>4.0.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/casehubio/*</url>
+      <releases><enabled>false</enabled></releases>
+
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/casehubio/*</url>
+      <snapshots><enabled>true</enabled></snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/casehubio/connectors</url>
+    </repository>
+    <snapshotRepository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/casehubio/connectors</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+
+</project>

@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>io.casehub</groupId>
+  <artifactId>casehub-ledger-parent</artifactId>
+  <version>0.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>CaseHub Ledger - Parent</name>
+  <description>CaseHub extension — immutable audit ledger with hash chain, peer attestations, and EigenTrust reputation for Quarkus applications</description>
+  <url>https://github.com/casehubio/ledger</url>
+
+  <modules>
+    <module>api</module>
+    <module>ledger-core</module>
+    <module>ledger-jpa-common</module>
+    <module>annotations</module>
+    <module>runtime</module>
+    <module>deployment</module>
+    <module>persistence-memory</module>
+    <module>consumer-compat-test</module>
+    <module>testing</module>
+    <module>rest</module>
+    <!-- graphql requires casehub-platform-graphql-spring-generator (not yet published) -->
+    <!-- <module>graphql</module> -->
+    <module>reporting</module>
+    <!-- ledger-spring uses casehub-platform-graphql-spring-generator plugin (not yet published) -->
+    <!-- <module>ledger-spring</module> -->
+    <!-- ledger-spring-jpa depends on ledger-spring -->
+    <!-- <module>ledger-spring-jpa</module> -->
+    <!-- signing-spring requires vault-transit/aws-kms/gcp-kms/azure-keyvault modules (not yet created) -->
+    <!-- <module>ledger-signing-spring</module> -->
+    <!-- spring-integration-test depends on signing-spring -->
+    <!-- <module>ledger-spring-integration-test</module> -->
+  </modules>
+
+
+  <repositories>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/*</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/ledger</url>
+    </repository>
+    <snapshotRepository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/ledger</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <scm>
+    <connection>scm:git:https://github.com/casehubio/ledger.git</connection>
+    <developerConnection>scm:git:https://github.com/casehubio/ledger.git</developerConnection>
+    <url>https://github.com/casehubio/ledger</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <properties>
+    <quarkus.version>${quarkus.platform.version}</quarkus.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-ledger-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-ledger-jpa-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-ledger-testing</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${surefire-plugin.version}</version>
+          <configuration>
+            <systemPropertyVariables>
+              <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+            </systemPropertyVariables>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>io.smallrye</groupId>
+          <artifactId>jandex-maven-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+</build>
+
+  <profiles>
+    <profile>
+      <id>with-signing</id>
+      <modules>
+        <module>signing</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>with-examples</id>
+      <modules>
+        <module>examples/order-processing</module>
+        <module>examples/trust-score-routing</module>
+        <module>examples/vault-transit-signing</module>
+        <module>examples/aws-kms-signing</module>
+        <module>examples/gcp-kms-signing</module>
+        <module>examples/azure-keyvault-signing</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>native</id>
+      <activation>
+        <property>
+          <name>native</name>
+        </property>
+      </activation>
+      <properties>
+        <skipITs>false</skipITs>
+        <quarkus.native.enabled>true</quarkus.native.enabled>
+      </properties>
+    </profile>
+  </profiles>
+
+</project>

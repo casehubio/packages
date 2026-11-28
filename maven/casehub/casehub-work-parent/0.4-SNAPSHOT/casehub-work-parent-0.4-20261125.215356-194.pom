@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>io.casehub</groupId>
+  <artifactId>casehub-work-parent</artifactId>
+  <version>0.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>CaseHub Work - Parent</name>
+  <description>Human-scale WorkItem lifecycle management — expiry, delegation, escalation, audit trail.
+CaseHub platform module — human-scale WorkItem lifecycle management with optional integrations for Quarkus-Flow, CaseHub, and Qhorus.</description>
+  <url>https://github.com/casehubio/work</url>
+
+  <modules>
+    <module>api</module>
+    <module>test-support</module>
+    <module>core</module>
+    <module>runtime-core</module>
+    <module>work-support-core</module>
+    <module>runtime</module>
+    <module>deployment</module>
+    <module>flow</module>
+    <module>ledger</module>
+    <module>queues</module>
+    <!-- module>queues-examples</module --><!-- depends on queues -->
+    <!-- module>queues-dashboard</module --><!-- depends on queues -->
+    <!-- examples is enabled by the examples profile -->
+    <!-- module>flow-examples</module --><!-- Quarkus build fails on CI — tracked by #403 -->
+    <module>persistence-mongodb-core</module>
+    <module>persistence-mongodb</module>
+    <module>persistence-spring-mongodb</module>
+    <module>persistence-memory</module>
+    <module>issue-tracker</module>
+    <!-- ai is enabled by the examples profile -->
+    <module>reports</module>
+    <!-- module>postgres-broadcaster</module --><!-- test failures — tracked by #403 -->
+    <!-- module>queues-postgres-broadcaster</module --><!-- depends on queues -->
+    <module>rest</module>
+    <module>graphql</module>
+    <!-- engine-adapter removed — moved to engine repo (454bee26) -->
+    <module>qhorus</module>
+    <module>federation</module>
+    <module>client</module>
+    <module>progress-api</module>
+    <module>progress-core</module>
+    <module>progress-runtime</module>
+    <module>progress-rest</module>
+    <module>progress-deployment</module>
+    <module>progress-memory</module>
+    <module>annotations</module>
+    <!-- module>work-spring</module --><!-- blocked: SlaAdminCore not extracted to -core module -->
+    <module>spring-integration-test</module>
+
+    <!-- module>integration-tests</module --><!-- integration test failures from platform update — tracked by #403 -->
+    <!-- module>integration-tests-memory</module --><!-- Quarkus build fails — tracked by #403 -->
+  </modules>
+
+  <scm>
+    <connection>scm:git:git@github.com:casehubio/work.git</connection>
+    <developerConnection>scm:git:git@github.com:casehubio/work.git</developerConnection>
+    <url>https://github.com/casehubio/work</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <properties>
+    <quarkus.version>${quarkus.platform.version}</quarkus.version>
+    <!-- serverlessworkflow 7.13.8→7.35.3 has breaking API changes (experimental-fluent-func removed). Override until migration. -->
+    <serverlessworkflow.version>7.13.8.Final</serverlessworkflow.version>
+    <version.io.casehub>0.4-SNAPSHOT</version.io.casehub>
+  </properties>
+
+
+  <repositories>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/*</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/work</url>
+    </repository>
+    <snapshotRepository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/work</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- antlr-runtime convergence: drools pulls 3.5.2, spring-ai ST4 pulls 3.5.3 -->
+      <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr-runtime</artifactId>
+        <version>3.5.3</version>
+      </dependency>
+      <dependency>
+        <groupId>io.serverlessworkflow</groupId>
+        <artifactId>serverlessworkflow-bom</artifactId>
+        <version>${serverlessworkflow.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.quarkiverse.langchain4j</groupId>
+        <artifactId>quarkus-langchain4j-core</artifactId>
+        <version>1.8.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-jexl3</artifactId>
+        <version>3.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform-view</artifactId>
+        <version>0.4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform-view-jpa</artifactId>
+        <version>0.4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform-view-inmem</artifactId>
+        <version>0.4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform-callback-api</artifactId>
+        <version>0.4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform-callback</artifactId>
+        <version>0.4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform-yaml-core</artifactId>
+        <version>0.4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-work-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-work-federation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform-api</artifactId>
+        <version>${version.io.casehub}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform</artifactId>
+        <version>${version.io.casehub}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform-testing</artifactId>
+        <version>${version.io.casehub}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-platform-expression</artifactId>
+        <version>${version.io.casehub}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-ledger-testing</artifactId>
+        <version>${version.io.casehub}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-qhorus-api</artifactId>
+        <version>${version.io.casehub}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-qhorus-persistence-memory</artifactId>
+        <version>${version.io.casehub}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-work-persistence-memory</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>io.smallrye</groupId>
+          <artifactId>jandex-maven-plugin</artifactId>
+          <version>3.1.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+</build>
+
+  <profiles>
+    <profile>
+      <id>examples</id>
+      <modules>
+        <module>ai</module>
+        <module>examples</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>native</id>
+      <activation>
+        <property>
+          <name>native</name>
+        </property>
+      </activation>
+      <properties>
+        <skipITs>false</skipITs>
+        <quarkus.native.enabled>true</quarkus.native.enabled>
+      </properties>
+    </profile>
+  </profiles>
+
+</project>

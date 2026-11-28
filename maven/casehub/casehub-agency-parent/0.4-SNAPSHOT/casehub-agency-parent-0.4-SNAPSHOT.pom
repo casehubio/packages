@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>casehub-agency-parent</artifactId>
+  <version>0.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>casehub-agency-parent</name>
+  <description>Parent POM for CaseHub Agency modules</description>
+  <url>https://github.com/casehubio/agency</url>
+
+  <modules>
+    <module>summarisation-api</module>
+    <module>cloudevents</module>
+    <module>summarisation-yaml</module>
+    <module>summarisation-yaml-deployment</module>
+    <module>agency-core</module>
+    <module>agency</module>
+    <module>avatar-yaml</module>
+    <module>agentic-yaml</module>
+    <module>agentic-yaml-deployment</module>
+    <module>engine-adapter-core</module>
+    <module>engine-adapter</module>
+    <module>agency-spring</module>
+    <module>engine-adapter-spring</module>
+    <module>spring-integration-test</module>
+    <module>speech-api</module>
+    <module>speech-ws</module>
+    <module>annotations</module>
+  </modules>
+
+  <profiles>
+    <profile>
+      <id>jdk22+</id>
+      <activation>
+        <jdk>[22,)</jdk>
+      </activation>
+      <modules>
+        <module>speech-deployment</module>
+        <module>speech-demo</module>
+      </modules>
+    </profile>
+  </profiles>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-ledger-testing</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jspecify</groupId>
+        <artifactId>jspecify</artifactId>
+        <version>1.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mvel</groupId>
+        <artifactId>mvel3</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>github-casehubio</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/*</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/agency</url>
+    </repository>
+    <snapshotRepository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/agency</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <scm>
+    <connection>scm:git:https://github.com/casehubio/agency.git</connection>
+    <developerConnection>scm:git:https://github.com/casehubio/agency.git</developerConnection>
+    <url>https://github.com/casehubio/agency</url>
+  </scm>
+
+
+</project>

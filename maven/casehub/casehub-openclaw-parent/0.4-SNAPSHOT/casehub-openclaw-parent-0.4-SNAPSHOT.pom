@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>casehub-openclaw-parent</artifactId>
+  <version>0.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>CaseHub OpenClaw :: Parent</name>
+  <description>CaseHub × OpenClaw integration — ChannelContextWindow, bidirectional Qhorus wiring,
+    WorkerProvisioner, ChannelBackend SPI implementations</description>
+  <url>https://github.com/casehubio/openclaw</url>
+
+  <modules>
+    <module>core</module>
+    <module>casehub</module>
+    <module>app</module>
+  </modules>
+
+  <properties>
+    <version.quarkus.platform>${quarkus.platform.version}</version.quarkus.platform>
+    <jandex-maven-plugin.version>3.3.1</jandex-maven-plugin.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- casehub-openclaw inter-module -->
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-openclaw-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-openclaw-casehub</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- langchain4j core — ChatModel bridge -->
+      <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-core</artifactId>
+        <version>1.14.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.wiremock</groupId>
+        <artifactId>wiremock</artifactId>
+        <version>3.13.0</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/*</url>
+      <releases><enabled>false</enabled></releases>
+
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/openclaw</url>
+    </repository>
+    <snapshotRepository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/openclaw</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <scm>
+    <connection>scm:git:https://github.com/casehubio/openclaw.git</connection>
+    <developerConnection>scm:git:https://github.com/casehubio/openclaw.git</developerConnection>
+    <url>https://github.com/casehubio/openclaw</url>
+  </scm>
+
+
+
+</project>

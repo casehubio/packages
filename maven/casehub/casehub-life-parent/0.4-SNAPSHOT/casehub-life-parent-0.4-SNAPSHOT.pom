@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>casehub-life-parent</artifactId>
+  <version>0.4-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>CaseHub Life :: Parent</name>
+  <description>Personal life automation application on the CaseHub agentic harness —
+    household coordination, health, finance, elder care, legal compliance</description>
+  <url>https://github.com/casehubio/life</url>
+
+  <modules>
+    <module>api</module>
+    <module>app</module>
+  </modules>
+
+  <properties>
+    <version.mosaic>0.4-SNAPSHOT</version.mosaic>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Alias for app/pom.xml quarkus-maven-plugin version reference -->
+    <version.quarkus.platform>${quarkus.platform.version}</version.quarkus.platform>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- casehub-life inter-module -->
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-life-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <!-- convergence: engine-api 1.6.0 vs platform-expression 1.0.0 -->
+      <dependency>
+        <groupId>net.thisptr</groupId>
+        <artifactId>jackson-jq</artifactId>
+        <version>1.6.0</version>
+      </dependency>
+      <!-- convergence: engine-support-core (via playbook-compiler) 7.35.3 vs quarkus-flow 7.25.1 -->
+      <dependency>
+        <groupId>io.serverlessworkflow</groupId>
+        <artifactId>serverlessworkflow-types</artifactId>
+        <version>7.35.3.Final</version>
+      </dependency>
+      <dependency>
+        <groupId>io.serverlessworkflow</groupId>
+        <artifactId>serverlessworkflow-impl-core</artifactId>
+        <version>7.35.3.Final</version>
+      </dependency>
+      <dependency>
+        <groupId>io.serverlessworkflow</groupId>
+        <artifactId>serverlessworkflow-annotations</artifactId>
+        <version>7.35.3.Final</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/*</url>
+      <releases><enabled>false</enabled></releases>
+
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/life</url>
+    </repository>
+    <snapshotRepository>
+      <id>github</id>
+      <name>casehubio GitHub Packages</name>
+      <url>https://maven.pkg.github.com/casehubio/life</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <scm>
+    <connection>scm:git:https://github.com/casehubio/life.git</connection>
+    <developerConnection>scm:git:https://github.com/casehubio/life.git</developerConnection>
+    <url>https://github.com/casehubio/life</url>
+  </scm>
+
+
+
+</project>

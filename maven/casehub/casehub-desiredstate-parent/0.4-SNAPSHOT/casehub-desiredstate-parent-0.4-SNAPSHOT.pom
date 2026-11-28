@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-parent</artifactId>
+        <version>0.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>casehub-desiredstate-parent</artifactId>
+    <version>0.4-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>CaseHub Desired State :: Parent</name>
+    <description>Generic desired-state management runtime — planner, reconciliation loop, fault policy, core SPIs.
+        Domain-agnostic: GoalCompiler, ActualStateAdapter, NodeProvisioner, FaultPolicy, EventSource SPIs.
+        Workflow delegation to casehub-engine-flow. Human nodes via casehub-work WorkItems.</description>
+    <url>https://github.com/casehubio/casehub-desiredstate</url>
+
+    <modules>
+        <module>api</module>
+        <module>runtime-core</module>
+        <module>runtime</module>
+        <module>runtime-spring</module>
+        <module>testing</module>
+        <module>engine-adapter</module>
+        <module>work-adapter</module>
+        <module>ras-adapter</module>
+        <module>persistence-jpa-common</module>
+        <module>persistence-jpa</module>
+        <module>persistence-spring-jpa</module>
+        <module>examples/dungeon</module>
+        <module>examples/pipeline</module>
+        <module>examples/spatial</module>
+        <module>examples/expansion</module>
+        <module>annotations</module>
+        <module>yaml</module>
+        <module>plugin</module>
+        <module>bridge</module>
+        <module>ts-dsl</module>
+        <module>examples/pipeline-annotated</module>
+        <module>examples/pipeline-yaml</module>
+        <module>examples/webapp</module>
+        <module>examples/webapp-annotated</module>
+        <module>examples/webapp-yaml</module>
+        <module>examples/pipeline-ts</module>
+        <module>examples/plugin-yaml</module>
+        <module>examples/bridge-cloud</module>
+        <module>eidos</module>
+        <module>spring-integration-test</module>
+    </modules>
+
+    <properties>
+        <jandex-maven-plugin.version>3.3.1</jandex-maven-plugin.version>
+        <jackson-jq.version>1.6.2</jackson-jq.version>
+        <spring-boot.version>4.1.1</spring-boot.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Boot BOM -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Align Engine Flow's SDK with platform playbook compilation. -->
+            <dependency>
+                <groupId>io.serverlessworkflow</groupId>
+                <artifactId>serverlessworkflow-bom</artifactId>
+                <version>7.35.3.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- platform yaml-core orchestration primitives -->
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-platform-yaml-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- platform step pipeline -->
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-platform-yaml-step-runtime</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- neocortex CBR types (CbrPath, CbrOutcomeData, CbrEventTypes) -->
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-neocortex-memory-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- eidos org model API for GoalCompiler integration -->
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-eidos-org-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- casehub-desiredstate inter-module -->
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-runtime-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-runtime-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-testing</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-engine</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-work</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-ras</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-persistence-jpa-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-persistence-spring-jpa</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-persistence-jpa</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-annotations-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-annotations-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-desiredstate-yaml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.thisptr</groupId>
+                <artifactId>jackson-jq</artifactId>
+                <version>${jackson-jq.version}</version>
+            </dependency>
+
+            <!-- cross-project casehub dependencies -->
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-platform-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-platform</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-platform-testing</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-platform-agent-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-platform-yaml-jackson</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ras-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ras</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-ras-testing</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-engine-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-worker-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-engine-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.casehub</groupId>
+                <artifactId>casehub-engine-flow</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cloudevents</groupId>
+                <artifactId>cloudevents-core</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr-runtime</artifactId>
+                <version>3.5.3</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>casehubio GitHub Packages</name>
+            <url>https://maven.pkg.github.com/casehubio/*</url>
+            <releases><enabled>false</enabled></releases>
+
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>casehubio GitHub Packages</name>
+            <url>https://maven.pkg.github.com/casehubio/casehub-desiredstate</url>
+        </repository>
+        <snapshotRepository>
+            <id>github</id>
+            <name>casehubio GitHub Packages</name>
+            <url>https://maven.pkg.github.com/casehubio/casehub-desiredstate</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:git:https://github.com/casehubio/casehub-desiredstate.git</connection>
+        <developerConnection>scm:git:https://github.com/casehubio/casehub-desiredstate.git</developerConnection>
+        <url>https://github.com/casehubio/casehub-desiredstate</url>
+    </scm>
+
+
+</project>
